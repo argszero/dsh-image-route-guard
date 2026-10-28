@@ -1,0 +1,22 @@
+# The @argszero/dsh-image-route-guard bundle patch.
+#
+# It does nothing until you name a route. With an empty config the mount is
+# inert: every request is dispatched with the caller's own options object.
+#
+#   - insert:
+#       - id: image-route-guard
+#         config:
+#           # Routes whose requests must carry text placeholders instead of
+#           # image blocks. `provider` is the route id exactly as registered;
+#           # omit `model` to cover every model on that provider.
+#           routes:
+#             - provider: agnes
+#               model: agnes-3.0-flash
+#           # warnLimit: 5   # diagnostics per mount; 0 silences them
+#
+# Inside a bundle whose patch already has rows, add the same `insert` entry
+# instead of a second document.
+
+- insert:
+    - id: image-route-guard
+      name: '@argszero/dsh-image-route-guard'

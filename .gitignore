@@ -1,0 +1,4 @@
+node_modules/
+*.tsbuildinfo
+# lib/ is deliberately NOT ignored: the git install channel has no build step, so
+# the built output is what makes `dsh plugin add github:...` load (c789's lesson).

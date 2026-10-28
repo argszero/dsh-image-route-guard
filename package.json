@@ -1,0 +1,66 @@
+{
+  "name": "@argszero/dsh-image-route-guard",
+  "version": "0.1.0",
+  "description": "Keep an image block off a dsh route that cannot carry one: the runtime projects images to text only when the MODEL declares itself text-only, never when the ROUTE (provider + protocol) has no legal wire shape for the block, so a vision model on such a protocol sends it anyway and a 400 poisons the session permanently. Mounted on the LLM runtime, this projects image blocks to the harness's own text placeholder for the routes an operator declares image-incapable, leaves every other route untouched, and dispatches an unconfigured or unreadable call with the caller's own options object.",
+  "type": "module",
+  "main": "lib/index.js",
+  "types": "lib/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/types/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./src/*": "./src/*",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib/index.js",
+    "lib/types/**/*.d.ts",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/argszero/dsh-image-route-guard.git"
+  },
+  "homepage": "https://github.com/argszero/dsh-image-route-guard#readme",
+  "bugs": {
+    "url": "https://github.com/argszero/dsh-image-route-guard/issues"
+  },
+  "keywords": [
+    "cordis",
+    "cordis-plugin",
+    "dsh",
+    "deepseek-harness",
+    "image",
+    "vision",
+    "request-projection",
+    "route",
+    "protocol"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": ">=4.0.2 <5 || >=4.0.5-alpha.1 <5",
+    "@deepseek-ai/dsh-llm": ">=0.1.6-alpha.1 <0.1.7 || >=0.2.0-alpha.1 <0.2.1 || >=0.2.1-alpha.1 <0.2.2 || >=0.2.2-alpha.1 <0.2.3"
+  },
+  "dependencies": {
+    "@deepseek-ai/schemastery": "^3.18.1"
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "^4.0.5",
+    "@deepseek-ai/dsh-llm": "0.2.1-rc.3",
+    "@types/node": "^22.10.2",
+    "typescript": "^5.5.0"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "tsc && node --test \"test/*.spec.mjs\"",
+    "prepublishOnly": "tsc"
+  }
+}
