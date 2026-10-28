@@ -44,8 +44,50 @@
  * the caller's own options object, by identity, not a copy.
  */
 import type { Context } from '@deepseek-ai/cordis'
-import { contentHasImage, projectImagesForTextModel } from '@deepseek-ai/dsh-llm'
 import z from '@deepseek-ai/schemastery'
+
+/**
+ * Local copies of the two primitives this mount needs, deliberately not
+ * imported: `@deepseek-ai/dsh-llm` is a real dependency of the harness, not of a
+ * profile, so importing it makes the installed plugin unresolvable
+ * (`ERR_MODULE_NOT_FOUND` — measured on the installed copy). Both are a few
+ * lines, and `test/` pins them byte-for-byte against the runtime's own exports.
+ */
+
+/** Durable image reference, narrowed to the field the placeholder reads. */
+interface ImageRef {
+  readonly attachmentId: string
+}
+
+/** Stable text shown to a model that cannot accept one durable image reference. */
+function textOnlyImageText(ref: ImageRef): string {
+  const digest = String(ref.attachmentId).slice('sha256:'.length, 'sha256:'.length + 8)
+  return `[image omitted because this model accepts text only; attachment sha256:${digest}]`
+}
+
+/** Whether this content carries an image block. */
+function contentHasImage(content: readonly { type: string }[]): boolean {
+  return content.some(block => block.type === 'image')
+}
+
+/**
+ * Project request image content into deterministic text.
+ * Untouched messages keep their identity, so a healthy request is not copied.
+ */
+function projectImagesForTextModel<T extends { content: readonly { type: string }[] }>(
+  messages: readonly T[],
+): readonly T[] {
+  if (!messages.some(message => contentHasImage(message.content))) return messages
+  return messages.map((message) => {
+    if (!contentHasImage(message.content)) return message
+    return {
+      ...message,
+      content: message.content.map(block => (block.type === 'image'
+        ? { type: 'text', text: textOnlyImageText((block as unknown as { attachment: ImageRef }).attachment) }
+        : block)),
+    }
+  })
+}
 
 export const name = 'image-route-guard'
 

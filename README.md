@@ -110,7 +110,14 @@ dispatched with the caller's own options object.
 ## Verification
 
 Measured on `@deepseek-ai/dsh-llm@0.2.1-rc.3` with `@deepseek-ai/cordis@4.0.5`
-(newer than the rc.2 in the report). Suite: 13 arms, 13 passing.
+(newer than the rc.2 in the report). Suite: 17 arms, 17 passing — behaviour arms
+against a real `LlmRuntime` and a recording adapter, plus packaging arms.
+
+The runtime imports nothing but `@deepseek-ai/schemastery`. That is not stylistic:
+a profile carries the plugin, not the harness's own dependency tree, so importing
+`@deepseek-ai/dsh-llm` made `dsh plugin add` return 0 and the *installed* copy
+throw `ERR_MODULE_NOT_FOUND`. The two primitives this needs are a few lines each,
+copied, and `test/` pins them byte-for-byte against the runtime's own exports.
 
 Every line number above belongs to the upstream tree at `f3803c9697`
 (`dsh-v0.2.2-alpha.2`); line numbers for this plugin's own files belong to its
